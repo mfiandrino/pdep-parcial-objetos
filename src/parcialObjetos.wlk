@@ -4,3 +4,8 @@ object wollok {
 		return 'I am Wolloktastic!'
 	}
 }
+
+object prueba
+{
+	
+}
