@@ -22,7 +22,7 @@ class Invader
 
 class Squid inherits Invader
 {
-	
+	//Hereda el metodo disparar de la clase Invader
 }
 
 class Crab inherits Invader
@@ -30,8 +30,8 @@ class Crab inherits Invader
 	override method disparar(jugador)
 	{
 		super(jugador)
-		if(jugador.vida().between(1,50))
-			jugador.impactar()
+		if(jugador.tienePocaVida())
+			jugador.serImpactadoPor(self)
 	}
 }
 
@@ -40,7 +40,7 @@ class UFO inherits Invader
 	override method disparar(jugador)
 	{
 		super(jugador)
-		jugador.impactar()
+		jugador.serImpactadoPor(self)
 	}
 }
 
@@ -51,10 +51,11 @@ class Octopus inherits Invader
 		if(tablero.cantidadDeInvaders().even())
 			super(jugador)
 		else
-			jugador.impactar()
-			
+			jugador.serImpactadoPor(self)		
 	}
 }
+
+//Ver linea: Hacer que un invader dispare al jugador si puede, es decir si está vivo. ----------------------------------
 
 object player
 {	
@@ -65,7 +66,7 @@ object player
 	{
 		self.validarInvader(invader)
 		self.incrementarVidaPorDisparo(invader)
-		categoria.efectoDisparo(invader,self)
+		categoria.ocasionarDanio(invader,self)
 	}
 	
 	method incrementarVidaPorDisparo(invader)
@@ -88,11 +89,18 @@ object player
 	{
 		categoria.cambiar(self)
 	}
+	
+	method serImpactadoPor(invader)
+	{
+		categoria.serImpactado(invader,self)
+	}
+	
+	method tienePocaVida() = vida.between(1,50)
 }
 
 object novato
 {
-	method efectoDisparo(invader,player)
+	method ocasionarDanio(invader,player)
 	{
 		invader.modificarDurabilidad(player.vida() * (-0.1))
 	}
@@ -104,30 +112,42 @@ object novato
 	
 	method cambiar(player)
 	{
-		if(tablero.invaders().any({inv => inv.durabilidad() < player.vida()}))
+		if(self.vidaSuperaAAlgunaDurabilidad(player))
 			player.categoria(experimentado)
 	}
+	
+	method vidaSuperaAAlgunaDurabilidad(player) = tablero.invaders().any({inv => player.vida() > inv.durabilidad()})
 }
 
 object experimentado
 {
 	var property vidaPerdidaPorImpacto = 5
 	
-	method efectoDisparo(invader,_)
+	method ocasionarDanio(invader,_)
 	{
-		invader.modificarDurabilidad(-tablero.cantidadDeInvaders())
+		invader.modificarDurabilidad(-tablero.cantidadDeInvadersVivos())
 	}
 	
 	method serImpactado(invader,player)
 	{
 		player.modificarVida(-vidaPerdidaPorImpacto)
 	}
+
+	method cambiar(player)
+	{
+		if(self.vidaSuperaAlMenosLaMitadDeLasDurabilidades(player))
+			player.categoria(gamer)
+	}	
 	
+	method vidaSuperaAlMenosLaMitadDeLasDurabilidades(player) = self.cantDeInvadersQueElPlayerSuperaSuDurabilidad(player) > (tablero.cantidadDeInvaders() / 2)
+	
+	method cantDeInvadersQueElPlayerSuperaSuDurabilidad(player) = tablero.invaders().count({inv => player.vida() > inv.durabilidad()})
+	 
 }
 
 object gamer
 {
-	method efectoDisparo(invader,_)
+	method ocasionarDanio(invader,_)
 	{
 		invader.morir()
 	}
@@ -136,6 +156,8 @@ object gamer
 	{
 		player.modificarVida(-tablero.invaderMejorPosicionado().durabilidad())
 	}
+	
+	method cambiar(){}
 }
 
 object tablero
@@ -145,6 +167,8 @@ object tablero
 	method cantidadDeInvaders() = invaders.size()
 	
 	method invaderMejorPosicionado() = invaders.max({invader => invader.durabilidad()})
+	
+	method cantidadDeInvadersVivos() = invaders.count({inv => not inv.estaMuerto()})
 }
 
 
