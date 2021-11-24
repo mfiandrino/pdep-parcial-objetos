@@ -54,4 +54,11 @@ describe "Tests de parcial de objectos"
 	{
 		assert.equals(tablero.cantidadDeInvaders(),4)
 	}
+	
+	test "Player cambia de categoria"
+	{
+		assert.equals(player.categoria(),novato)
+		player.cambiarDeCategoria()
+		assert.equals(player.categoria(),experimentado)
+	}
 }
