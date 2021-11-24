@@ -4,6 +4,12 @@ class Invader
 	
 	method disparar(jugador)
 	{
+		if(not self.estaMuerto())
+			self.realizarDisparo(jugador)
+	}
+	
+	method realizarDisparo(jugador)
+	{
 		durabilidad += 1
 	}
 	
@@ -27,7 +33,7 @@ class Squid inherits Invader
 
 class Crab inherits Invader
 {
-	override method disparar(jugador)
+	override method realizarDisparo(jugador)
 	{
 		super(jugador)
 		if(jugador.tienePocaVida())
@@ -37,7 +43,7 @@ class Crab inherits Invader
 
 class UFO inherits Invader
 {
-	override method disparar(jugador)
+	override method realizarDisparo(jugador)
 	{
 		super(jugador)
 		jugador.serImpactadoPor(self)
@@ -46,20 +52,17 @@ class UFO inherits Invader
 
 class Octopus inherits Invader
 {
-	override method disparar(jugador)
+	override method realizarDisparo(jugador)
 	{
-		if(tablero.cantidadDeInvaders().even())
-			super(jugador)
-		else
-			jugador.serImpactadoPor(self)		
+		super(jugador)
+		if(not tablero.cantidadDeInvaders().even())
+			jugador.serImpactadoPor(self)
 	}
 }
 
-//Ver linea: Hacer que un invader dispare al jugador si puede, es decir si está vivo. ----------------------------------
-
 object player
 {	
-	var property vida
+	var property vida = 100
 	var property categoria = novato
 	
 	method disparar(invader)
@@ -169,7 +172,15 @@ object tablero
 	method invaderMejorPosicionado() = invaders.max({invader => invader.durabilidad()})
 	
 	method cantidadDeInvadersVivos() = invaders.count({inv => not inv.estaMuerto()})
+	
+	method agregarInvader(invader)
+	{
+		invaders.add(invader)
+	}
 }
+
+
+
 
 
 
