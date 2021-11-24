@@ -69,7 +69,7 @@ object player
 	{
 		self.validarInvader(invader)
 		self.incrementarVidaPorDisparo(invader)
-		categoria.ocasionarDanio(invader,self)
+		categoria.ocasionarDanio(invader)
 	}
 	
 	method incrementarVidaPorDisparo(invader)
@@ -90,12 +90,12 @@ object player
 	
 	method cambiarDeCategoria()
 	{
-		categoria.cambiar(self)
+		categoria.cambiar()
 	}
 	
 	method serImpactadoPor(invader)
 	{
-		categoria.serImpactado(invader,self)
+		categoria.serImpactado(invader)
 	}
 	
 	method tienePocaVida() = vida.between(1,50)
@@ -103,23 +103,23 @@ object player
 
 object novato
 {
-	method ocasionarDanio(invader,player)
+	method ocasionarDanio(invader)
 	{
 		invader.modificarDurabilidad(player.vida() * (-0.1))
 	}
 	
-	method serImpactado(invader,player)
+	method serImpactado(invader)
 	{
 		player.modificarVida(-invader.durabilidad() / 2)
 	}
 	
-	method cambiar(player)
+	method cambiar()
 	{
-		if(self.vidaSuperaAAlgunaDurabilidad(player))
+		if(self.vidaSuperaAAlgunaDurabilidad())
 			player.categoria(experimentado)
 	}
 	
-	method vidaSuperaAAlgunaDurabilidad(player) = tablero.invaders().any({inv => player.vida() > inv.durabilidad()})
+	method vidaSuperaAAlgunaDurabilidad() = tablero.invaders().any({inv => player.vida() > inv.durabilidad()})
 }
 
 object experimentado
@@ -131,20 +131,20 @@ object experimentado
 		invader.modificarDurabilidad(-tablero.cantidadDeInvadersVivos())
 	}
 	
-	method serImpactado(invader,player)
+	method serImpactado(invader)
 	{
 		player.modificarVida(-vidaPerdidaPorImpacto)
 	}
 
-	method cambiar(player)
+	method cambiar()
 	{
-		if(self.vidaSuperaAlMenosLaMitadDeLasDurabilidades(player))
+		if(self.vidaSuperaAlMenosLaMitadDeLasDurabilidades())
 			player.categoria(gamer)
 	}	
 	
-	method vidaSuperaAlMenosLaMitadDeLasDurabilidades(player) = self.cantDeInvadersQueElPlayerSuperaSuDurabilidad(player) > (tablero.cantidadDeInvaders() / 2)
+	method vidaSuperaAlMenosLaMitadDeLasDurabilidades() = self.cantDeInvadersQueElPlayerSuperaSuDurabilidad() > (tablero.cantidadDeInvaders() / 2)
 	
-	method cantDeInvadersQueElPlayerSuperaSuDurabilidad(player) = tablero.invaders().count({inv => player.vida() > inv.durabilidad()})
+	method cantDeInvadersQueElPlayerSuperaSuDurabilidad() = tablero.invaders().count({inv => player.vida() > inv.durabilidad()})
 	 
 }
 
@@ -155,7 +155,7 @@ object gamer
 		invader.morir()
 	}
 	
-	method serImpactado(invader,player)
+	method serImpactado(invader)
 	{
 		player.modificarVida(-tablero.invaderMejorPosicionado().durabilidad())
 	}
