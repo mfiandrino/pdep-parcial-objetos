@@ -180,6 +180,16 @@ object tablero
 }
 
 
+/*	Punto 6
+ * 
+ * En el sentido estricto de la definicion de clase abstracta, esta requiere por lo menos un metodo abstracto 
+ * y no se puede instanciar objetos a partir de la misma
+ * 
+ * Pero en cuanto al modelo realizado, la clase Invader seria una clase abstracta a pesar de que no tiene un metodo abstracto,
+ * ya que no creamos instancias a partir de ella.
+ * 
+*/
+
 
 
 

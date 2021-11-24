@@ -5,7 +5,7 @@ describe "Tests de parcial de objectos"
 	const squid = new Squid(durabilidad = 20)
 	const crab = new Crab(durabilidad = 30)
 	const octopus = new Octopus(durabilidad = 40)
-	const ufo = new UFO(durabilidad = 95)
+	const ufo = new UFO(durabilidad = 94)
 	
 	method initialize()
 	{
@@ -15,19 +15,43 @@ describe "Tests de parcial de objectos"
 		tablero.agregarInvader(ufo)
 	}
 	
-	test "player le dispara a un invader (uno que verifique que se haya producido efecto correctamente)" 
+	test "Player le dispara a un invader (uno que verifique que se haya producido efecto correctamente)" 
 	{
 		//El player es categoria novato
 		player.disparar(ufo)
-		assert.equals(player.vida(),105)
-		assert.equals(ufo.durabilidad(),84.5) //Porque primero aumenta la vida del jugador
+		assert.equals(player.vida(),106)
+		assert.equals(ufo.durabilidad(),83.4) //Porque primero aumenta la vida del jugador
 	}
 	
-	test "un invader le dispara al player (uno que verifique que se haya producido efecto correctamente)" 
+	test "Un invader le dispara al player (uno que verifique que se haya producido efecto correctamente)" 
 	{
 		//El player es categoria novato
 		crab.disparar(player) //El jugador no tiene poca vida, por lo tanto no deberia impactarle
 		assert.equals(player.vida(),100)
 		assert.equals(crab.durabilidad(),31) //Aumenta 1 por disparar
+	}
+	
+	test "Otro invader le dispara al player (uno que verifique que se haya producido efecto correctamente)" 
+	{
+		//El player es categoria novato
+		ufo.disparar(player) //Siempre impacta
+		assert.equals(player.vida(),52.5) //Le quita la mitad de la durabilidad de ufo
+		assert.equals(ufo.durabilidad(),95) //Aumenta 1 por disparar
+	}
+	
+	test "Si un invader esta muerto, el player no debe poder dispararle (uno que verifique que capture un error de manera de verificar que no puede hacerse algo.)"
+	{
+		squid.durabilidad(0)
+		assert.throwsException({player.disparar(squid)})
+	}
+	
+	test "Un invader no esta muerto(uno que verifique que se devuelva bien la operación.)"
+	{
+		assert.notThat(squid.estaMuerto())
+	}
+	
+	test "Cantidad de invaders en el tablero(uno que verifique que se devuelva bien la operación.)"
+	{
+		assert.equals(tablero.cantidadDeInvaders(),4)
 	}
 }
